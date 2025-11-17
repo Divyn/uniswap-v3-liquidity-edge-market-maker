@@ -1,4 +1,4 @@
-## Uniswap Liquidity Calculator
+# Uniswap Liquidity Finder For Market Makers to Add/Remove Liquidity
 
 Analyze Uniswap v3 WETH/USDT liquidity, bucket positions into price bands, and highlight the most capitalized ranges. The project ships both a command-line workflow (`main.py`) and a cached Flask API/UI (`app.py`).
 
@@ -6,6 +6,10 @@ Analyze Uniswap v3 WETH/USDT liquidity, bucket positions into price bands, and h
 - Cleans and normalizes ticks, prices, and token amounts (`parser.py`, `outlier_service.py`)
 - Aggregates liquidity into configurable price bins (`bin_service.py`)
 - Ranks bands by combined WETH+USDT value and annotates 24 h trading volume (`recommender_service.py`)
+
+### Final Output
+
+![](/runlog.png)
 
 ### Project Structure
 - `bitquery_service.py` – GraphQL queries for mint positions, liquidity events, and 24 h trading volume
