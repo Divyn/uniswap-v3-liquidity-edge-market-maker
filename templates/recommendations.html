@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uniswap Liquidity Recommendations</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .price-input-section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .price-input-form {
+            display: flex;
+            gap: 20px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+        
+        .input-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .input-group label {
+            display: block;
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .input-group input::placeholder {
+            color: #999;
+        }
+        
+        .submit-button {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            white-space: nowrap;
+        }
+        
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .submit-button:active {
+            transform: translateY(0);
+        }
+        
+        .submit-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .metadata {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .metadata-item {
+            text-align: center;
+        }
+        
+        .metadata-item label {
+            display: block;
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .metadata-item value {
+            display: block;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .section-title {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .band-list {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .band-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            background: #f9f9f9;
+        }
+        
+        .band-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .band-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .band-rank {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+            background: #e8eaf6;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .band-title {
+            font-size: 0.9em;
+            color: #666;
+            margin-right: 10px;
+            text-align: right;
+        }
+        
+        .band-price-range {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .band-price-container {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            flex: 1;
+        }
+        
+        .band-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .detail-label {
+            font-size: 0.85em;
+            color: #666;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .detail-value {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .detail-value.highlight {
+            color: #667eea;
+            font-size: 1.3em;
+        }
+        
+        .error {
+            background: #ffebee;
+            border: 2px solid #f44336;
+            border-radius: 10px;
+            padding: 20px;
+            color: #c62828;
+            text-align: center;
+            font-size: 1.1em;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .empty-state p {
+            font-size: 1.2em;
+        }
+        
+        .loading-container {
+            text-align: center;
+            padding: 60px 20px;
+            color: white;
+        }
+        
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            font-size: 1.2em;
+            margin-top: 20px;
+        }
+        
+        .content-container {
+            display: none;
+        }
+        
+        .content-container.loaded {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .price-input-form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .input-group {
+                min-width: 100%;
+            }
+            
+            .submit-button {
+                width: 100%;
+            }
+            
+            .band-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .band-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1> Uniswap Liquidity Recommendations</h1>
+            <p>Top price bands to add WETH/USDT liquidity</p>
+        </div>
+        
+        <div class="price-input-section">
+            <form class="price-input-form" id="priceFilterForm" method="GET" action="/">
+                <div class="input-group">
+                    <label for="price_lower">Price Lower ($)</label>
+                    <input 
+                        type="number" 
+                        id="price_lower" 
+                        name="price_lower" 
+                        step="0.01" 
+                        min="0" 
+                        placeholder="Enter lower price"
+                        value="{{ request.args.get('price_lower', '') }}"
+                    >
+                </div>
+                <div class="input-group">
+                    <label for="price_upper">Price Upper ($)</label>
+                    <input 
+                        type="number" 
+                        id="price_upper" 
+                        name="price_upper" 
+                        step="0.01" 
+                        min="0" 
+                        placeholder="Enter upper price"
+                        value="{{ request.args.get('price_upper', '') }}"
+                    >
+                </div>
+                <button type="submit" class="submit-button">Filter Recommendations</button>
+            </form>
+        </div>
+        
+        <!-- Loading Container -->
+        <div id="loadingContainer" class="loading-container">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Loading recommendations...</div>
+        </div>
+        
+        <!-- Error Container -->
+        <div id="errorContainer" class="error" style="display: none;">
+            <strong>Error:</strong> <span id="errorMessage"></span>
+        </div>
+        
+        <!-- Content Container -->
+        <div id="contentContainer" class="content-container">
+            <div id="metadataContainer"></div>
+            <div id="liquidityBandsContainer"></div>
+        </div>
+    </div>
+    
+    <script>
+        // Get URL parameters
+        function getUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                price_lower: params.get('price_lower') || '',
+                price_upper: params.get('price_upper') || '',
+                refresh: params.get('refresh') || ''
+            };
+        }
+        
+        // Build API URL
+        function buildApiUrl() {
+            const params = getUrlParams();
+            const queryParams = new URLSearchParams();
+            if (params.price_lower) queryParams.append('price_lower', params.price_lower);
+            if (params.price_upper) queryParams.append('price_upper', params.price_upper);
+            if (params.refresh) queryParams.append('refresh', params.refresh);
+            
+            const queryString = queryParams.toString();
+            return '/api/recommendations' + (queryString ? '?' + queryString : '');
+        }
+        
+        // Format number with commas
+        function formatNumber(num) {
+            return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+        
+        // Format number with 6 decimals
+        function formatNumber6Decimals(num) {
+            return num.toLocaleString('en-US', { minimumFractionDigits: 6, maximumFractionDigits: 6 });
+        }
+        
+        // Render metadata
+        function renderMetadata(metadata) {
+            if (!metadata) return '';
+            
+            return `
+                <div class="metadata">
+                    <div class="metadata-item">
+                        <label>Total Positions</label>
+                        <value>${metadata.total_positions || 0}</value>
+                    </div>
+                    <div class="metadata-item">
+                        <label>Total Bins</label>
+                        <value>${metadata.total_bins || 0}</value>
+                    </div>
+                    <div class="metadata-item">
+                        <label>Bins with Positions</label>
+                        <value>${metadata.bins_with_positions || 0}</value>
+                    </div>
+                    <div class="metadata-item">
+                        <label>Time Range</label>
+                        <value>${metadata.time_range_hours || 240}h</value>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Render liquidity bands
+        function renderLiquidityBands(bands, metadata) {
+            if (!bands || bands.length === 0) {
+                return `
+                    <div class="section">
+                        <h2 class="section-title"> Top ${(metadata && (metadata.price_filter_lower || metadata.price_filter_upper)) ? '3' : '5'} Bands by Liquidity</h2>
+                        <div class="empty-state">
+                            <p>No liquidity bands found.</p>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            const topN = (metadata && (metadata.price_filter_lower || metadata.price_filter_upper)) ? 3 : 5;
+            const bandsHtml = bands.map((band, index) => `
+                <div class="band-card">
+                    <div class="band-header">
+                        <div class="band-rank">${index + 1}</div>
+                        <div class="band-price-container">
+                            <h3 class="band-title">Price Band Range</h3>
+                            <div class="band-price-range">
+                                $${formatNumber(band.priceLower)} - $${formatNumber(band.priceUpper)}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="band-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Total Liquidity</span>
+                            <span class="detail-value highlight">$${formatNumber(band.total_liquidity || 0)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">WETH Amount</span>
+                            <span class="detail-value">${formatNumber6Decimals(band.amount_weth || 0)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">USDT Amount</span>
+                            <span class="detail-value">$${formatNumber(band.amount_usdt || 0)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Number of Positions</span>
+                            <span class="detail-value">${band.count_nfts || 0}</span>
+                        </div>
+                        ${band.trading_volume_24h !== undefined ? `
+                        <div class="detail-item">
+                            <span class="detail-label">24h Trading Volume</span>
+                            <span class="detail-value">$${formatNumber(band.trading_volume_24h || 0)}</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+            
+            return `
+                <div class="section">
+                    <h2 class="section-title">Top Bands by Liquidity</h2>
+                    <div class="band-list">
+                        ${bandsHtml}
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Load recommendations
+        async function loadRecommendations() {
+            const loadingContainer = document.getElementById('loadingContainer');
+            const errorContainer = document.getElementById('errorContainer');
+            const contentContainer = document.getElementById('contentContainer');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            try {
+                // Show loading, hide error and content
+                loadingContainer.style.display = 'block';
+                errorContainer.style.display = 'none';
+                contentContainer.style.display = 'none';
+                
+                const apiUrl = buildApiUrl();
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                
+                if (data.error) {
+                    // Show error
+                    errorMessage.textContent = data.error;
+                    errorContainer.style.display = 'block';
+                    loadingContainer.style.display = 'none';
+                } else {
+                    // Render data
+                    document.getElementById('metadataContainer').innerHTML = renderMetadata(data.metadata);
+                    document.getElementById('liquidityBandsContainer').innerHTML = renderLiquidityBands(data.top_liquidity_bands, data.metadata);
+                    
+                    // Show content, hide loading
+                    contentContainer.classList.add('loaded');
+                    contentContainer.style.display = 'block';
+                    loadingContainer.style.display = 'none';
+                }
+            } catch (error) {
+                // Show error
+                errorMessage.textContent = 'Failed to load recommendations: ' + error.message;
+                errorContainer.style.display = 'block';
+                loadingContainer.style.display = 'none';
+            }
+        }
+        
+        // Handle form submission
+        document.getElementById('priceFilterForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const params = new URLSearchParams();
+            if (formData.get('price_lower')) params.append('price_lower', formData.get('price_lower'));
+            if (formData.get('price_upper')) params.append('price_upper', formData.get('price_upper'));
+            window.location.search = params.toString();
+        });
+        
+        // Load recommendations on page load
+        document.addEventListener('DOMContentLoaded', loadRecommendations);
+    </script>
+</body>
+</html>
+
