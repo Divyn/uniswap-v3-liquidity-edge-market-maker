@@ -24,8 +24,7 @@ Analyze Uniswap v3 WETH/USDT liquidity, bucket positions into price bands, and h
 ### Setup
 1. Clone the repo and install dependencies:
    ```bash
-   cd /Users/divyasshree/Documents/Github/uniswap-liquidity-calculator
-   python -m venv .venv && source .venv/bin/activate
+   git clone https://github.com/Divyn/uniswap-v3-liquidity-edge-market-maker
    pip install -r requirements.txt
    ```
 2. Create a `.env` file (or export env vars) with your Bitquery token:
