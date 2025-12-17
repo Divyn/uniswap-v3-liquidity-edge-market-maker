@@ -11,6 +11,9 @@ Analyze Uniswap v3 WETH/USDT liquidity, bucket positions into price bands, and h
 
 ![](/runlog.png)
 
+### Working Paper
+[https://doi.org/10.5281/zenodo.17637632](https://doi.org/10.5281/zenodo.17637632)
+
 ### Project Structure
 - `bitquery_service.py` – GraphQL queries for mint positions, liquidity events, and 24 h trading volume
 - `parser.py` – normalizes tick/price math, token decimals, and merges mint + liquidity deltas
